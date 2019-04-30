@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"Cameron"
+	],
+	"copyright": "Copyright © 2019, Cameron",
+	"description": "Game Randomizer",
+	"license": "proprietary",
+	"name": "randomizer",
+	"dependencies": {
+		"libgamestruct": "*",
+		"pixelatrix": "*"
+	}
+}
