@@ -15,27 +15,27 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 	const randomConstant = rand.uniform01();
 	final switch (randomizationLevel) {
 		case ColourRandomizationLevel.shiftHue:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV((x.hue + randomConstant) % 1.0, x.saturation, x.value)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV((x.hue + randomConstant) % 1.0, x.saturation, x.value)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.multHue:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV((x.hue * randomConstant * 2.0) % 1.0, x.saturation, x.value)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV((x.hue * randomConstant * 2.0) % 1.0, x.saturation, x.value)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.randomHue:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(rand.uniform01(), x.saturation, x.value)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(rand.uniform01(), x.saturation, x.value)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.randomSaturation:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(x.hue, rand.uniform01(), x.value)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, rand.uniform01(), x.value)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.shiftSaturation:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(x.hue, (x.saturation + randomConstant) % 1.0, x.value)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, (x.saturation + randomConstant) % 1.0, x.value)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.multSaturation:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(x.hue, min(x.saturation * randomConstant * 2.0, 1.0), x.value)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, min(x.saturation * randomConstant * 2.0, 1.0), x.value)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.randomValue:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, rand.uniform01())).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, rand.uniform01())).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.shiftValue:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, (x.value + randomConstant) % 1.0)).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, (x.value + randomConstant) % 1.0)).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.multValue:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, min(x.value * randomConstant * 2.0, 1.0))).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, min(x.value * randomConstant * 2.0, 1.0))).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.absurd:
-			return input[0..$].map!(x => x.toHSV).map!(x => HSV(rand.uniform01(), rand.uniform01(), rand.uniform01())).map!(x => x.toRGB!T).array;
+			return input.map!(x => x.toHSV).map!(x => HSV(rand.uniform01(), rand.uniform01(), rand.uniform01())).map!(x => x.toRGB!T).array;
 		case ColourRandomizationLevel.extreme:
-			return input[0..$].map!(x => T(rand.uniform01(), rand.uniform01(), rand.uniform01())).array;
+			return input.map!(x => T(rand.uniform01(), rand.uniform01(), rand.uniform01())).array;
 	}
 }
 
