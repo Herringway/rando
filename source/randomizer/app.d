@@ -9,6 +9,7 @@ import std.stdio : writeln;
 import std.traits;
 
 import randomizer.common;
+import randomizer.names;
 import randomizer.palette;
 
 import libgamestruct;
@@ -48,6 +49,8 @@ void randomizeGame(Game)(ubyte[] data, const uint seed, const Options options) {
 	writeln("Random seed: ", seed);
 	writeln("Randomizing palettes...");
 	randomizeGamePalettes(game, nextSeed, options);
+	writeln("Randomizing names...");
+	randomizeGameNames(game, nextSeed, options);
 	auto filename = game.name~"."~seed.text~"."~Game.extension;
 	writeln("Writing "~filename~"...");
 	write(filename, game.raw);
