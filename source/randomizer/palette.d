@@ -42,13 +42,17 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 void randomizeGamePalettes(Game)(ref GameWrapper!Game game, const uint seed, const Options options) {
 	import std.random : Random, uniform;
 	import std.stdio : writeln;
-	import std.traits : getSymbolsByUDA, getUDAs;
+	import std.traits : getSymbolsByUDA, getUDAs, hasUDA;
 
 	auto rand = Random(seed);
 	uint nextSeed = seed;
 
 	static foreach (field; getSymbolsByUDA!(Game, Palette)) {{
 		enum paletteOptions = getUDAs!(field, Palette)[0];
+		static if (hasUDA!(field, Label)) {
+			enum label = getUDAs!(field, Label)[0];
+			writeln("\t- "~label.name~"...");
+		}
 		debug(verbose) writeln("Randomizing "~field.stringof~"...");
 		foreach (ref palette; mixin("game.game."~field.stringof)[]) {
 			if (!paletteOptions.shareSeed) {
