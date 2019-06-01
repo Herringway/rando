@@ -1,4 +1,4 @@
-module randomizer.common;
+module rando.common;
 
 import libgamestruct.common;
 import std.typecons;

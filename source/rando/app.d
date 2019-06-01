@@ -1,4 +1,4 @@
-module randomizer.app;
+module rando.app;
 
 import std.conv;
 import std.file;
@@ -8,9 +8,9 @@ import std.random;
 import std.stdio : writeln;
 import std.traits;
 
-import randomizer.common;
-import randomizer.names;
-import randomizer.palette;
+import rando.common;
+import rando.names;
+import rando.palette;
 
 import libgamestruct;
 
@@ -22,7 +22,7 @@ void main(string[] args) {
 	    "seed|s",  "A seed value between 0 and 4294967295", ((string o, string s) => options.seed = s.to!uint)
     );
 	  if (helpInformation.helpWanted || (args.length < 2)) {
-	    defaultGetoptPrinter("Usage: randomizer <path to game>.", helpInformation.options);
+	    defaultGetoptPrinter("Usage: rando <path to game>.", helpInformation.options);
 	  }
 	if (args.length > 1) {
 		ubyte[] data = cast(ubyte[])read(args[1]);

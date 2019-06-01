@@ -1,9 +1,9 @@
-module randomizer.names;
+module rando.names;
 
 import libgamestruct.common;
 import std.random : Random, uniform;
 
-import randomizer.common;
+import rando.common;
 
 static immutable string[string] genTable;
 static immutable string[string] genTableStarts;

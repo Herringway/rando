@@ -1,10 +1,10 @@
-module randomizer.palette;
+module rando.palette;
 
 import libgamestruct.common;
 import pixelatrix.color;
 import std.random : Random, uniform;
 
-import randomizer.common;
+import rando.common;
 
 T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, uint seed) {
 	import std.algorithm.iteration : map;
