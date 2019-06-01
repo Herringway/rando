@@ -91,10 +91,7 @@ void randomizePalette(Palette paletteOptions, T)(ref T field, ref Random rng, re
 	if (!paletteOptions.shareSeed) {
 		seed = rng.uniform!uint;
 	}
-	size_t start = 1;
-	if (paletteOptions.dontSkipFirst) {
-		start = 0;
-	}
+	const start = paletteOptions.dontSkipFirst ? 0 : 1;
 	field[start .. $] = randomizePalette(field[start .. $], options.colourRandomizationStyle, seed);
 }
 
