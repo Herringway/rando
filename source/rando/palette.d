@@ -14,30 +14,77 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 
 	auto rand = Random(seed);
 	const randomConstant = rand.uniform01();
-	final switch (randomizationLevel) {
-		case ColourRandomizationLevel.shiftHue:
-			return input.map!(x => x.toHSV).map!(x => HSV((x.hue + randomConstant) % 1.0, x.saturation, x.value)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.multHue:
-			return input.map!(x => x.toHSV).map!(x => HSV((x.hue * randomConstant * 2.0) % 1.0, x.saturation, x.value)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.randomHue:
-			return input.map!(x => x.toHSV).map!(x => HSV(rand.uniform01(), x.saturation, x.value)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.randomSaturation:
-			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, rand.uniform01(), x.value)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.shiftSaturation:
-			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, (x.saturation + randomConstant) % 1.0, x.value)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.multSaturation:
-			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, min(x.saturation * randomConstant * 2.0, 1.0), x.value)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.randomValue:
-			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, rand.uniform01())).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.shiftValue:
-			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, (x.value + randomConstant) % 1.0)).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.multValue:
-			return input.map!(x => x.toHSV).map!(x => HSV(x.hue, x.saturation, min(x.value * randomConstant * 2.0, 1.0))).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.absurd:
-			return input.map!(x => x.toHSV).map!(x => HSV(rand.uniform01(), rand.uniform01(), rand.uniform01())).map!(x => x.toRGB!T).array;
-		case ColourRandomizationLevel.extreme:
-			return input.map!(x => T(rand.uniform01(), rand.uniform01(), rand.uniform01())).array;
+	HSV genRandomHSV(HSV input, ColourRandomizationLevel level) {
+		final switch (randomizationLevel) {
+			case ColourRandomizationLevel.shiftHue:
+				return HSV(
+					(input.hue + randomConstant) % 1.0,
+					input.saturation,
+					input.value
+				);
+			case ColourRandomizationLevel.multHue:
+				return HSV((
+					input.hue * randomConstant * 2.0) % 1.0,
+					input.saturation,
+					input.value
+				);
+			case ColourRandomizationLevel.randomHue:
+				return HSV(
+					rand.uniform01(),
+					input.saturation,
+					input.value
+				);
+			case ColourRandomizationLevel.randomSaturation:
+				return HSV(
+					input.hue,
+					rand.uniform01(),
+					input.value
+				);
+			case ColourRandomizationLevel.shiftSaturation:
+				return HSV(
+					input.hue,
+					(input.saturation + randomConstant) % 1.0,
+					input.value
+				);
+			case ColourRandomizationLevel.multSaturation:
+				return HSV(
+					input.hue,
+					min(input.saturation * randomConstant * 2.0, 1.0),
+					input.value
+				);
+			case ColourRandomizationLevel.randomValue:
+				return HSV(
+					input.hue,
+					input.saturation,
+					rand.uniform01()
+				);
+			case ColourRandomizationLevel.shiftValue:
+				return HSV(
+					input.hue,
+					input.saturation,
+					(input.value + randomConstant) % 1.0
+				);
+			case ColourRandomizationLevel.multValue:
+				return HSV(
+					input.hue,
+					input.saturation,
+					min(input.value * randomConstant * 2.0, 1.0)
+				);
+			case ColourRandomizationLevel.absurd:
+				return HSV(
+					rand.uniform01(),
+					rand.uniform01(),
+					rand.uniform01()
+				);
+			case ColourRandomizationLevel.extreme:
+				return T(
+					rand.uniform01(),
+					rand.uniform01(),
+					rand.uniform01()
+				).toHSV;
+		}
 	}
+	return input.map!(x => x.toHSV).map!(x => genRandomHSV(x, randomizationLevel)).map!(x => x.toRGB!T).array;
 }
 
 void randomizePalette(Palette paletteOptions, T)(ref T field, ref Random rng, ref uint seed, const Options options) {
