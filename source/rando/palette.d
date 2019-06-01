@@ -23,8 +23,8 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 					input.value
 				);
 			case ColourRandomizationLevel.multHue:
-				return HSV((
-					input.hue * randomConstant * 2.0) % 1.0,
+				return HSV(
+					(input.hue * randomConstant * 2.0) % 1.0,
 					input.saturation,
 					input.value
 				);
