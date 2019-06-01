@@ -48,9 +48,9 @@ void randomizeGame(Game)(ubyte[] data, const uint seed, const Options options) {
 	auto nextSeed = rand.uniform!uint;
 	writeln("Random seed: ", seed);
 	writeln("Randomizing palettes...");
-	randomizeGamePalettes(game, nextSeed, options);
+	randomizeGamePalettes(*game.game, nextSeed, options);
 	writeln("Randomizing names...");
-	randomizeGameNames(game, nextSeed, options);
+	randomizeGameNames(*game.game, nextSeed, options);
 	auto filename = game.name~"."~seed.text~"."~Game.extension;
 	writeln("Writing "~filename~"...");
 	write(filename, game.raw);

@@ -2,6 +2,7 @@ module randomizer.palette;
 
 import libgamestruct.common;
 import pixelatrix.color;
+import std.random : Random, uniform;
 
 import randomizer.common;
 
@@ -39,31 +40,17 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 	}
 }
 
-void randomizeGamePalettes(Game)(ref GameWrapper!Game game, const uint seed, const Options options) {
-	import std.random : Random, uniform;
-	import std.stdio : writeln;
-	import std.traits : getSymbolsByUDA, getUDAs, hasUDA;
+void randomizePalette(Palette paletteOptions, T)(ref T field, ref Random rng, ref uint seed, const Options options) {
+	if (!paletteOptions.shareSeed) {
+		seed = rng.uniform!uint;
+	}
+	size_t start = 1;
+	if (paletteOptions.dontSkipFirst) {
+		start = 0;
+	}
+	field[start .. $] = randomizePalette(field[start .. $], options.colourRandomizationStyle, seed);
+}
 
-	auto rand = Random(seed);
-	uint nextSeed = seed;
-
-	static foreach (field; getSymbolsByUDA!(Game, Palette)) {{
-		enum paletteOptions = getUDAs!(field, Palette)[0];
-		static if (hasUDA!(field, Label)) {
-			enum label = getUDAs!(field, Label)[0];
-			writeln("\t- "~label.name~"...");
-		}
-		debug(verbose) writeln("Randomizing "~field.stringof~"...");
-		foreach (ref palette; mixin("game.game."~field.stringof)[]) {
-			if (!paletteOptions.shareSeed) {
-				nextSeed = rand.uniform!uint;
-			}
-			size_t start = 1;
-			if (paletteOptions.dontSkipFirst) {
-				start = 0;
-			}
-			palette[start .. $] = randomizePalette(palette[start .. $], options.colourRandomizationStyle, nextSeed);
-		}
-		nextSeed = rand.uniform!uint;
-	}}
+void randomizeGamePalettes(Game)(ref Game game, const uint seed, const Options options) {
+	randomizeBase!(Palette, randomizePalette)(game, seed, options);
 }

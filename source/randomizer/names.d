@@ -1,6 +1,7 @@
 module randomizer.names;
 
 import libgamestruct.common;
+import std.random : Random, uniform;
 
 import randomizer.common;
 
@@ -68,25 +69,11 @@ string generateName(size_t length, uint seed) @safe
 }
 
 
-void randomizeGameNames(Game)(ref GameWrapper!Game game, const uint seed, const Options options) {
-	import std.random : Random, uniform;
-	import std.stdio : writeln;
-	import std.traits : getSymbolsByUDA, getUDAs, hasUDA;
+void randomizeNames(Name CTOptions, T)(ref T field, ref Random rng, ref uint seed, const Options options) {
+	seed =  rng.uniform!uint;
+	field = generateName(field.length, seed);
+}
 
-	auto rand = Random(seed);
-	uint nextSeed = seed;
-
-	static foreach (field; getSymbolsByUDA!(Game, Name)) {{
-		enum nameOptions = getUDAs!(field, Name)[0];
-		static if (hasUDA!(field, Label)) {
-			enum label = getUDAs!(field, Label)[0];
-			writeln("\t- "~label.name~"...");
-		}
-		debug(verbose) writeln("Randomizing "~field.stringof~"...");
-		foreach (ref name; mixin("game.game."~field.stringof)[]) {
-			nextSeed = rand.uniform!uint;
-			name = generateName(name.length, nextSeed);
-		}
-		nextSeed = rand.uniform!uint;
-	}}
+void randomizeGameNames(Game)(ref Game game, const uint seed, const Options options) {
+	randomizeBase!(Name, randomizeNames)(game, seed, options);
 }
