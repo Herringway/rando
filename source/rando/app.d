@@ -26,7 +26,7 @@ void main(string[] args) {
 	  }
 	if (args.length > 1) {
 		ubyte[] data = cast(ubyte[])read(args[1]);
-		const seed = options.seed.isNull ? unpredictableSeed : options.seed;
+		const seed = options.seed.get(unpredictableSeed);
 		static foreach (Game; AliasSeq!(MMBN1, MMBN2, MMBN3, MMBN4, MMBN5, MMBN6, Earthbound, PokemonGS)) {
 			randomizeGame!Game(data, seed, options);
 		}
