@@ -8,6 +8,6 @@
 	"name": "rando",
 	"dependencies": {
 		"libgamestruct": "*",
-		"pixelatrix": "*"
+		"magicalrainbows": "~>0.0"
 	}
 }

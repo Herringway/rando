@@ -1,7 +1,7 @@
 module rando.palette;
 
 import libgamestruct.common;
-import pixelatrix.color;
+import magicalrainbows.formats;
 import std.random : Random, uniform;
 
 import rando.common;
