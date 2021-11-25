@@ -6,6 +6,20 @@ import std.random : Random, uniform;
 
 import rando.common;
 
+enum ColourRandomizationLevel {
+	randomHue,
+	shiftHue,
+	multHue,
+	randomSaturation,
+	shiftSaturation,
+	multSaturation,
+	randomValue,
+	shiftValue,
+	multValue,
+	absurd,
+	extreme
+}
+
 T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, uint seed) {
 	import std.algorithm.iteration : map;
 	import std.algorithm.comparison : min;
@@ -14,77 +28,87 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 
 	auto rand = Random(seed);
 	const randomConstant = rand.uniform01();
-	HSV genRandomHSV(HSV input, ColourRandomizationLevel level) {
+	HSVA!float genRandomHSV(HSVA!float input, ColourRandomizationLevel level) {
 		final switch (randomizationLevel) {
 			case ColourRandomizationLevel.shiftHue:
-				return HSV(
+				return HSVA!float(
 					(input.hue + randomConstant) % 1.0,
 					input.saturation,
-					input.value
+					input.value,
+					input.alpha
 				);
 			case ColourRandomizationLevel.multHue:
-				return HSV(
+				return HSVA!float(
 					(input.hue * randomConstant * 2.0) % 1.0,
 					input.saturation,
-					input.value
+					input.value,
+					input.alpha
 				);
 			case ColourRandomizationLevel.randomHue:
-				return HSV(
+				return HSVA!float(
 					rand.uniform01(),
 					input.saturation,
-					input.value
+					input.value,
+					input.alpha
 				);
 			case ColourRandomizationLevel.randomSaturation:
-				return HSV(
+				return HSVA!float(
 					input.hue,
 					rand.uniform01(),
-					input.value
+					input.value,
+					input.alpha
 				);
 			case ColourRandomizationLevel.shiftSaturation:
-				return HSV(
+				return HSVA!float(
 					input.hue,
 					(input.saturation + randomConstant) % 1.0,
-					input.value
+					input.value,
+					input.alpha
 				);
 			case ColourRandomizationLevel.multSaturation:
-				return HSV(
+				return HSVA!float(
 					input.hue,
 					min(input.saturation * randomConstant * 2.0, 1.0),
-					input.value
+					input.value,
+					input.alpha
 				);
 			case ColourRandomizationLevel.randomValue:
-				return HSV(
+				return HSVA!float(
 					input.hue,
 					input.saturation,
-					rand.uniform01()
+					rand.uniform01(),
+					input.alpha
 				);
 			case ColourRandomizationLevel.shiftValue:
-				return HSV(
+				return HSVA!float(
 					input.hue,
 					input.saturation,
-					(input.value + randomConstant) % 1.0
+					(input.value + randomConstant) % 1.0,
+					input.alpha
 				);
 			case ColourRandomizationLevel.multValue:
-				return HSV(
+				return HSVA!float(
 					input.hue,
 					input.saturation,
-					min(input.value * randomConstant * 2.0, 1.0)
+					min(input.value * randomConstant * 2.0, 1.0),
+					input.alpha
 				);
 			case ColourRandomizationLevel.absurd:
-				return HSV(
+				return HSVA!float(
 					rand.uniform01(),
 					rand.uniform01(),
-					rand.uniform01()
+					rand.uniform01(),
+					input.alpha
 				);
 			case ColourRandomizationLevel.extreme:
-				return T(
-					rand.uniform01(),
-					rand.uniform01(),
-					rand.uniform01()
-				).toHSV;
+				return RGB888(
+					rand.uniform!ubyte(),
+					rand.uniform!ubyte(),
+					rand.uniform!ubyte()
+				).toHSVA!float;
 		}
 	}
-	return input.map!(x => x.toHSV).map!(x => genRandomHSV(x, randomizationLevel)).map!(x => x.toRGB!T).array;
+	return input.map!(x => x.toHSVA!float).map!(x => genRandomHSV(x, randomizationLevel)).map!(x => x.toRGB!(T, float)).array;
 }
 
 void randomizePalette(Palette paletteOptions, T)(ref T field, ref Random rng, ref uint seed, const Options options) {
@@ -93,8 +117,4 @@ void randomizePalette(Palette paletteOptions, T)(ref T field, ref Random rng, re
 	}
 	const start = paletteOptions.dontSkipFirst ? 0 : 1;
 	field[start .. $] = randomizePalette(field[start .. $], options.colourRandomizationStyle, seed);
-}
-
-void randomizeGamePalettes(Game)(ref Game game, const uint seed, const Options options) {
-	randomizeBase!(Palette, randomizePalette)(game, seed, options);
 }

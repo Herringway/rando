@@ -18,3 +18,5 @@ randomizer-test-*
 *.nes
 *.sfc
 dub.selections.json
+.vs
+*.lib

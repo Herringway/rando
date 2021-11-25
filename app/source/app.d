@@ -19,7 +19,7 @@ void main(string[] args) {
 	  auto helpInformation = getopt(
 	    args,
 	    "colourstyle|c",  "Colour randomization mode: shiftHue, randomHue, shiftSaturation, randomSaturation, shiftValue, randomValue, absurd, extreme", &options.colourRandomizationStyle,
-	    "seed|s",  "A seed value between 0 and 4294967295", ((string o, string s) => options.seed = s.to!uint)
+	    "seed|s",  "A seed value between 0 and 4294967295", ((string o, string s) { options.seed = s.to!uint; })
     );
 	  if (helpInformation.helpWanted || (args.length < 2)) {
 	    defaultGetoptPrinter("Usage: rando <path to game>.", helpInformation.options);
@@ -27,7 +27,7 @@ void main(string[] args) {
 	if (args.length > 1) {
 		ubyte[] data = cast(ubyte[])read(args[1]);
 		const seed = options.seed.get(unpredictableSeed);
-		static foreach (Game; AliasSeq!(MMBN1, MMBN2, MMBN3, MMBN4, MMBN5, MMBN6, Earthbound, PokemonGS)) {
+		static foreach (Game; AliasSeq!(MMBN1, MMBN2, MMBN3, MMBN4, MMBN5, MMBN6, Earthbound, PokemonGUSA, PokemonSUSA)) {
 			randomizeGame!Game(data, seed, options);
 		}
 	}
@@ -47,10 +47,8 @@ void randomizeGame(Game)(ubyte[] data, const uint seed, const Options options) {
 	auto rand = Random(seed);
 	auto nextSeed = rand.uniform!uint;
 	writeln("Random seed: ", seed);
-	writeln("Randomizing palettes...");
-	randomizeGamePalettes(*game.game, nextSeed, options);
-	writeln("Randomizing names...");
-	randomizeGameNames(*game.game, nextSeed, options);
+	writeln("Randomizing data...");
+	randomize(*game.game, nextSeed, options);
 	auto filename = game.name~"."~seed.text~"."~Game.extension;
 	writeln("Writing "~filename~"...");
 	write(filename, game.raw);
