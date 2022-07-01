@@ -10,12 +10,18 @@ enum ColourRandomizationLevel {
 	randomHue,
 	shiftHue,
 	multHue,
+	shiftInverseHue,
+	multInverseHue,
 	randomSaturation,
 	shiftSaturation,
 	multSaturation,
+	shiftInverseSaturation,
+	multInverseSaturation,
 	randomValue,
 	shiftValue,
 	multValue,
+	shiftInverseValue,
+	multInverseValue,
 	absurd,
 	extreme
 }
@@ -27,85 +33,137 @@ T[] randomizePalette(T)(T[] input, ColourRandomizationLevel randomizationLevel, 
 	import std.random : Random, uniform01;
 
 	auto rand = Random(seed);
-	const randomConstant = rand.uniform01();
+	const randomConstantH0 = rand.uniform01();
+	const randomConstantH1 = rand.uniform01();
+	const randomConstantH2 = rand.uniform01();
+	const randomConstantS0 = rand.uniform01();
+	const randomConstantS1 = rand.uniform01();
+	const randomConstantS2 = rand.uniform01();
+	const randomConstantV0 = rand.uniform01();
+	const randomConstantV1 = rand.uniform01();
+	const randomConstantV2 = rand.uniform01();
 	HSVA!float genRandomHSV(HSVA!float input, ColourRandomizationLevel level) {
+		bool shiftHue;
+		bool multHue;
+		bool randomizeHue;
+		bool invertHue;
+		bool shiftSaturation;
+		bool multSaturation;
+		bool randomizeSaturation;
+		bool invertSaturation;
+		bool shiftValue;
+		bool multValue;
+		bool randomizeValue;
+		bool invertValue;
+		bool useRGB;
 		final switch (randomizationLevel) {
 			case ColourRandomizationLevel.shiftHue:
-				return HSVA!float(
-					(input.hue + randomConstant) % 1.0,
-					input.saturation,
-					input.value,
-					input.alpha
-				);
+				shiftHue = true;
+				break;
 			case ColourRandomizationLevel.multHue:
-				return HSVA!float(
-					(input.hue * randomConstant * 2.0) % 1.0,
-					input.saturation,
-					input.value,
-					input.alpha
-				);
+				multHue = true;
+				break;
+			case ColourRandomizationLevel.shiftInverseHue:
+				invertHue = true;
+				shiftHue = true;
+				break;
+			case ColourRandomizationLevel.multInverseHue:
+				invertHue = true;
+				multHue = true;
+				break;
 			case ColourRandomizationLevel.randomHue:
-				return HSVA!float(
-					rand.uniform01(),
-					input.saturation,
-					input.value,
-					input.alpha
-				);
+				randomizeHue = true;
+				break;
 			case ColourRandomizationLevel.randomSaturation:
-				return HSVA!float(
-					input.hue,
-					rand.uniform01(),
-					input.value,
-					input.alpha
-				);
+				randomizeSaturation = true;
+				break;
 			case ColourRandomizationLevel.shiftSaturation:
-				return HSVA!float(
-					input.hue,
-					(input.saturation + randomConstant) % 1.0,
-					input.value,
-					input.alpha
-				);
+				shiftSaturation = true;
+				break;
 			case ColourRandomizationLevel.multSaturation:
-				return HSVA!float(
-					input.hue,
-					min(input.saturation * randomConstant * 2.0, 1.0),
-					input.value,
-					input.alpha
-				);
+				multSaturation = true;
+				break;
+			case ColourRandomizationLevel.shiftInverseSaturation:
+				invertSaturation = true;
+				shiftSaturation = true;
+				break;
+			case ColourRandomizationLevel.multInverseSaturation:
+				invertSaturation = true;
+				multSaturation = true;
+				break;
 			case ColourRandomizationLevel.randomValue:
-				return HSVA!float(
-					input.hue,
-					input.saturation,
-					rand.uniform01(),
-					input.alpha
-				);
+				randomizeValue = true;
+				break;
 			case ColourRandomizationLevel.shiftValue:
-				return HSVA!float(
-					input.hue,
-					input.saturation,
-					(input.value + randomConstant) % 1.0,
-					input.alpha
-				);
+				shiftValue = true;
+				break;
 			case ColourRandomizationLevel.multValue:
-				return HSVA!float(
-					input.hue,
-					input.saturation,
-					min(input.value * randomConstant * 2.0, 1.0),
-					input.alpha
-				);
+				multValue = true;
+				break;
+			case ColourRandomizationLevel.shiftInverseValue:
+				invertValue = true;
+				shiftValue = true;
+				break;
+			case ColourRandomizationLevel.multInverseValue:
+				invertValue = true;
+				multValue = true;
+				break;
 			case ColourRandomizationLevel.absurd:
-				return HSVA!float(
-					rand.uniform01(),
-					rand.uniform01(),
-					rand.uniform01(),
-					input.alpha
-				);
+				randomizeHue = true;
+				randomizeSaturation = true;
+				randomizeValue = true;
+				break;
 			case ColourRandomizationLevel.extreme:
-				return RGB888(
-					rand.uniform!ubyte(),
-					rand.uniform!ubyte(),
-					rand.uniform!ubyte()
-				).toHSVA!float;
+				useRGB = true;
+				break;
+		}
+		if (useRGB) {
+			return RGB888(
+				rand.uniform!ubyte(),
+				rand.uniform!ubyte(),
+				rand.uniform!ubyte()
+			).toHSVA!float;
+		} else {
+			float hue = input.hue;
+			float saturation = input.saturation;
+			float value = input.value;
+			if (randomizeHue) {
+				hue = randomConstantH0;
+			}
+			if (randomizeSaturation) {
+				saturation = randomConstantS0;
+			}
+			if (randomizeValue) {
+				value = randomConstantV0;
+			}
+			if (shiftHue) {
+				hue += randomConstantH1;
+			}
+			if (invertHue) {
+				hue = 1.0 - hue;
+			}
+			if (invertSaturation) {
+				saturation = 1.0 - saturation;
+			}
+			if (invertValue) {
+				value = 1.0 - value;
+			}
+			if (multHue) {
+				hue *= randomConstantH2 * 2.0;
+			}
+			if (shiftSaturation) {
+				hue += randomConstantS1;
+			}
+			if (multSaturation) {
+				hue *= randomConstantS2 * 2.0;
+			}
+			if (shiftValue) {
+				value += randomConstantV1;
+			}
+			if (multValue) {
+				value *= randomConstantV2 * 2.0;
+			}
+			return HSVA!float(hue % 1.0, saturation % 1.0, value % 1.0, input.alpha);
 		}
 	}
 	return input.map!(x => x.toHSVA!float).map!(x => genRandomHSV(x, randomizationLevel)).map!(x => x.toRGB!(T, float)).array;
