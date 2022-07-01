@@ -73,7 +73,3 @@ void randomizeNames(Name CTOptions, T)(ref T field, ref Random rng, ref uint see
 	seed =  rng.uniform!uint;
 	field = generateName(field.length, seed);
 }
-
-void randomizeGameNames(Game)(ref Game game, const uint seed, const Options options) {
-	randomizeBase!(Name, randomizeNames)(game, seed, options);
-}
