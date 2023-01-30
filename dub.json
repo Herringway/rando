@@ -7,7 +7,7 @@
 	"license": "proprietary",
 	"name": "rando",
 	"dependencies": {
-		"libgamestruct": "*",
+		"reversineer": "~>0.0",
 		"magicalrainbows": "~>0.0"
 	},
 	"subPackages": [

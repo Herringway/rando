@@ -1,6 +1,6 @@
 module rando.palette;
 
-import libgamestruct.common;
+import reversineer;
 import magicalrainbows.formats;
 import std.random : Random, uniform;
 

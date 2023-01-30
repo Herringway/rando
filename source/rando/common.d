@@ -3,7 +3,6 @@ module rando.common;
 import rando.names;
 import rando.palette;
 
-import libgamestruct.common;
 import std.typecons;
 
 struct Options {

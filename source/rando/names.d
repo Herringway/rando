@@ -1,6 +1,6 @@
 module rando.names;
 
-import libgamestruct.common;
+import reversineer;
 import std.random : Random, uniform;
 
 import rando.common;
