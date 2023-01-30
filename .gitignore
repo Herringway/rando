@@ -20,3 +20,4 @@ randomizer-test-*
 dub.selections.json
 .vs
 *.lib
+*.pdb
